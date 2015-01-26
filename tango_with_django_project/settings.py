@@ -87,4 +87,4 @@ STATICFILES_DIRS = (
 		STATIC_PATH,
 )
 
-TEMPLATE_DIRS = ['C:/Users/Lauris/mano/tango_with_django_project/', TEMPLATE_PATH,]
+TEMPLATE_DIRS = ['C:\Users\Lauris\Desktop\Tango\tango_with_django_project\templates\rango', TEMPLATE_PATH,]

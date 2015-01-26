@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 
-{% load staticfiles %} <!-- New line -->
-
+{% load staticfiles %}
 <html>
 
     <head>
@@ -9,10 +8,10 @@
     </head>
 
     <body>
-        <h1>Rango says my name Whats my name??????...</h1>
-        Larry <strong>{{ boldmessage }}</strong><br />
-        <a href="/rango/about/">About</a><br />
-        <img src="{% static "images/PhotonDecay.PNG" %}" alt="Picture of PhotonDecay" /> <!-- New line -->
+        <h1>Hi!</h1>
+			<strong>{{ boldmessage }}</strong><br />
+        <a href="/rango">Back to Index</a><br />
+        <img src="{% static "images/welcome2.jpg" %}" alt="Picture of Myself" />
     </body>
 
 </html>
