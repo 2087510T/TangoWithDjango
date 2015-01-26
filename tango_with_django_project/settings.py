@@ -12,12 +12,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
-<<<<<<< HEAD
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-=======
-
->>>>>>> abdf291b10d8f97959b4fea6b2b49787baffccdc
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -85,16 +81,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-<<<<<<< HEAD
 STATIC_PATH = os.path.join(BASE_DIR,'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
 		STATIC_PATH,
 )
 
-TEMPLATE_DIRS = ['C:\Users\Lauris\Desktop\Tango\tango_with_django_project\templates\rango', TEMPLATE_PATH,]
-=======
-
-STATIC_URL = '/static/'
 TEMPLATE_DIRS = ['C:/Users/Lauris/mano/tango_with_django_project/', TEMPLATE_PATH,]
->>>>>>> abdf291b10d8f97959b4fea6b2b49787baffccdc
