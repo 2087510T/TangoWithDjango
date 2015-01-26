@@ -45,8 +45,17 @@ def populate():
     add_page(cat=frame_cat,
         title="Flask",
         url="http://flask.pocoo.org")
+    
+    frame_cat = add_cat("2087510T")
 
-    # Print out what we have added to the user.
+    add_page(cat=frame_cat,
+        title="Github",
+        url="https://github.com/2087510T")
+
+    add_page(cat=frame_cat,
+        title="Flask",
+        url="https://www.pythonanywhere.com/user/2087510t/files/home/2087510t")
+
     for c in Category.objects.all():
         for p in Page.objects.filter(category=c):
             print "- {0} - {1}".format(str(c), str(p))
