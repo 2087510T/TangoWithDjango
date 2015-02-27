@@ -1,14 +1,22 @@
 {% extends 'rango/base.html' %}
 
 {% load staticfiles %}
+{% block title %}About{% endblock %}
 
-{% block title %}{{ category_name }}{% endblock %}
 
 {% block body_block %}
 
-        <h1>Hi!</h1>
-			<strong>{{ boldmessage }}</strong><br />
-        <img src="{% static "images/welcome2.jpg" %}" alt="Picture of Myself" />
-		<p> visits: {{ visits }}</p>
+    <div class="page-header">
+                <h1>About</h1>
+			<p> Tutorial was done by Laurynas Tamulevicius (2087510T)</p>	
+			
+            </div>
+            <div>
+			<p> visits: {{ visits }}</p>
+            <p></strong>.</p>
+
+           
+			<img  width="960" height="600" src="{% static "images/welcome2.jpg" %}" alt="Picture of Myself" /> <!-- New line -->
+			</div>
 
 {% endblock %}
