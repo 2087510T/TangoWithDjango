@@ -1,0 +1,26 @@
+{% extends 'rango/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}{{ category_name }}{% endblock %}
+
+{% block body_block %}
+
+    <h1>{{ user_name }}</h1>
+    {% if user %}
+		 <div class="hero-unit">
+			 <h2>{{ user.username }}</h2>
+			 <p>Email: {{ user.email }}</p>
+		 
+			 {% if userprofile %}
+				 <p>Website: <a href="{{ userprofile.website }}">{{ userprofile.website }}</a></p>
+				 <br/>
+				 {% if userprofile.picture %}
+					 <img src="{{ userprofile.picture.url }}"  />
+				 {% endif %}
+				<p><a href="{% url 'edit_profile' %}">Edit Profile</a></p>
+			 {% endif %}
+		 </div> 
+    {% endif %}
+
+{% endblock %}

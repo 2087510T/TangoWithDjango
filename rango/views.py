@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rango.models import Category
 from rango.models import Page
-from rango.forms import CategoryForm
 from rango.forms import PageForm
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,8 +9,49 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
 from rango.bing_search import run_query
+from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from rango.models import Category, Page, UserProfile
+from rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 
 
+def track_url(request):
+    page_id = None
+    url = '/rango/'
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            try:
+                page = Page.objects.get(id=page_id)
+                page.views = page.views+1
+                page.save()
+                url = page.url
+            except:
+                pass
+
+    return redirect(url)
+'''def users (request):
+    context_dict = {}
+    users_list= UserProfile.objects.all
+    context_dict['users'] = users_list
+
+    return render(request, 'rango/users.html',context_dict)
+def user(request):
+    users_list= UserProfile.objects.all();
+
+	
+    context_dict = {}
+    context_dict['result_list'] = None
+    context_dict['query'] = None
+    try:
+        user = UserProfile.objects.get(username = request.user.username)
+        context_dict['user_name'] = user.username
+        context_dict['user'] = user
+    except:
+        pass
+
+    return render(request, 'rango/user.html', context_dict)
+'''
 def add_category(request):
     # A HTTP POST?
     if request.method == 'POST':
@@ -80,7 +120,7 @@ def index(request):
         last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
 
         if (datetime.now() - last_visit_time).seconds > 0:
-            # ...reassign the value of the cookie to +1 of what it was before...
+            # ...reassign the value of the cookie to  1 of what it was before...
             visits = visits + 1
             # ...and update the last visit cookie, too.
             reset_last_visit_time = True
@@ -109,38 +149,84 @@ def about(request):
     return render(request, 'rango/about.html', {'visits': count,'boldmessage': "This tutorial has been put together by Laurynas Tamulevicius, 2087510T."})
 
 def category(request, category_name_slug):
-
-    # Create a context dictionary which we can pass to the template rendering engine.
     context_dict = {}
+    context_dict['result_list'] = None
+    context_dict['query'] = None
+    if request.method == 'POST':
+        try:
+            query = request.POST['query'].strip()
+            if query:
+                # Run our Bing function to get the results list!
+                result_list = run_query(query)
+                context_dict['result_list'] = result_list
+                context_dict['query'] = query
+        except:
+            pass
 
     try:
-        # Can we find a category name slug with the given name?
-        # If we can't, the .get() method raises a DoesNotExist exception.
-        # So the .get() method returns one model instance or raises an exception.
         category = Category.objects.get(slug=category_name_slug)
-        print category.name
         context_dict['category_name'] = category.name
-        # Retrieve all of the associated pages.
-        # Note that filter returns >= 1 model instance.
-        pages = Page.objects.filter(category=category)
-
-        # Adds our results list to the template context under name pages.
+        pages = Page.objects.filter(category=category).order_by('-views')
         context_dict['pages'] = pages
-        # We also add the category object from the database to the context dictionary.
-        # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
     except Category.DoesNotExist:
-        # We get here if we didn't find the specified category.
-        # Don't do anything - the template displays the "no category" message for us.
         pass
-    context_dict['category_name_slug'] = category_name_slug
-    # Go render the response and return it to the client.
+
+    if not context_dict['query']:
+        context_dict['query'] = category.name
+
     return render(request, 'rango/category.html', context_dict)
-	
 
 @login_required
 def restricted(request):
     return render(request, 'rango/restricted.html',{})
+	
+def edit_profile(request):
+    if request.method == 'POST':
+
+        users_profile = UserProfile.objects.get(user=request.user)
+        profile_form = UserProfileForm(request.POST, instance=users_profile)
+        if profile_form.is_valid():
+            profile_to_edit = profile_form.save(commit=False)
+            try:
+                profile_to_edit.picture = request.FILES['picture']
+            except:
+                pass
+            profile_to_edit.save()
+            return profile(request)
+    else:
+        form = UserProfileForm(request.GET)
+        return render(request, 'rango/profile_edit.html', {'profile_form': form})
+
+
+@login_required
+def register_profile(request):
+    if request.method == 'POST':
+        profile_form = UserProfileForm(request.POST)
+        if profile_form.is_valid():
+            if request.user.is_authenticated():
+                profile = profile_form.save(commit=False)
+                user = User.objects.get(id=request.user.id)
+                profile.user = user
+                try:
+                    profile.picture = request.FILES['picture']
+                except:
+				    profile.save()
+        return index(request)
+    else:
+        form = UserProfileForm(request.GET)
+    return render(request, 'rango/profile_registration.html', {'profile_form': form})
+def profile(request):
+    user1 = User.objects.get(username = request.user.username)
+    context_dict = {}
+    try:
+        userProfile = UserProfile.objects.get(user=user1)
+    except:
+	    userProfile = None
+
+    context_dict['user'] = user1
+    context_dict['userprofile'] = userProfile
+    return render(request, 'rango/profile.html',context_dict)
 def search(request):
 
     result_list = []

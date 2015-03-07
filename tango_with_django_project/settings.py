@@ -48,6 +48,7 @@ INSTALLED_APPS = (
 'django.contrib.messages',
 'django.contrib.staticfiles',
 'rango',
+'bootstrap_toolkit',
 'registration', # add in the registration package
 )
 LOGIN_URL = '/rango/login/'
