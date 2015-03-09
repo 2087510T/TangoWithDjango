@@ -1,26 +1,27 @@
 {% extends 'rango/base.html' %}
 
-{% load staticfiles %}
-
-{% block title %}{{ category_name }}{% endblock %}
+{% block title %}{% if user_Profile %}{{ user_Profile.username }}{% else %} No such a user{% endif %}{% endblock %}
 
 {% block body_block %}
 
-    <h1>{{ user_name }}</h1>
-    {% if user %}
-		 <div class="hero-unit">
-			 <h2>{{ user.username }}</h2>
-			 <p>Email: {{ user.email }}</p>
-		 
-			 {% if userprofile %}
-				 <p>Website: <a href="{{ userprofile.website }}">{{ userprofile.website }}</a></p>
-				 <br/>
-				 {% if userprofile.picture %}
-					 <img src="{{ userprofile.picture.url }}"  />
-				 {% endif %}
-				<p><a href="{% url 'edit_profile' %}">Edit Profile</a></p>
-			 {% endif %}
-		 </div> 
+{% if user_Profile %}
+    <h2 class="form-signing-heading">
+    {{user_Profile.username}}
+    {% if logged %}
+	
+    <p><a class="btn btn-primary" href='/rango/edit_profile' role="button">Edit Profile</a><br/></p>
     {% endif %}
-
+    </h2>
+    <hr>
+    <b>Email:</b> {{user_Profile.email}}<br/>
+    {% if website %}
+        <b>Website:</b> {{website}}<br/>
+    {% endif %}
+    {% if picture %}
+        <b>Picture:</b><br/>
+        <img src="/media/{{picture}}" width="250px" alt="{{user_Profile.username}}"/>
+    {% endif %}
+{% else %}
+<h3>No such a user</h3>
+{% endif %}
 {% endblock %}

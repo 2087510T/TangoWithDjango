@@ -30,28 +30,38 @@ def track_url(request):
                 pass
 
     return redirect(url)
-'''def users (request):
+def users (request):
     context_dict = {}
-    users_list= UserProfile.objects.all
-    context_dict['users'] = users_list
+	
+    try:
+        users_list= User.objects.order_by('username')
+        context_dict['users'] = users_list
+    except:
+	    pass
 
     return render(request, 'rango/users.html',context_dict)
-def user(request):
-    users_list= UserProfile.objects.all();
-
-	
+def user(request,username):
     context_dict = {}
-    context_dict['result_list'] = None
-    context_dict['query'] = None
     try:
-        user = UserProfile.objects.get(username = request.user.username)
-        context_dict['user_name'] = user.username
-        context_dict['user'] = user
+        print (username)
+        user= User.objects.get(username=username)
     except:
-        pass
-
+	    user =None
+    if user: 
+        context_dict['user_Profile'] = user
+        context_dict['logged'] = False
+        if (user == request.user):
+            context_dict['logged'] = True 		
+        try:
+            user_profile = UserProfile.objects.get(user=user)
+        except: 
+            user_profile = None	
+        if user_profile: 
+            context_dict['website'] = user_profile.website
+            context_dict['picture'] = user_profile.picture 
+			
     return render(request, 'rango/user.html', context_dict)
-'''
+
 def add_category(request):
     # A HTTP POST?
     if request.method == 'POST':
@@ -150,6 +160,7 @@ def about(request):
 
 def category(request, category_name_slug):
     context_dict = {}
+ 
     context_dict['result_list'] = None
     context_dict['query'] = None
     if request.method == 'POST':
@@ -169,11 +180,11 @@ def category(request, category_name_slug):
         pages = Page.objects.filter(category=category).order_by('-views')
         context_dict['pages'] = pages
         context_dict['category'] = category
-    except Category.DoesNotExist:
-        pass
+        if not context_dict['query']:
+            context_dict['query'] = category.name
 
-    if not context_dict['query']:
-        context_dict['query'] = category.name
+    except Category.DoesNotExist:
+        HttpResponseRedirect('/rango/')
 
     return render(request, 'rango/category.html', context_dict)
 
@@ -223,7 +234,7 @@ def profile(request):
         userProfile = UserProfile.objects.get(user=user1)
     except:
 	    userProfile = None
-
+    print(user1)
     context_dict['user'] = user1
     context_dict['userprofile'] = userProfile
     return render(request, 'rango/profile.html',context_dict)
